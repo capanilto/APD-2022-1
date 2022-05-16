@@ -1,14 +1,11 @@
 /******************************************************************************
-* FILE: omp_hello.c
-* DESCRIPTION:
-*   OpenMP Example - Hello World - C/C++ Version
-*   In this simple example, the master thread forks a parallel region.
-*   All threads in the team obtain their unique thread number and print it.
-*   The master thread only prints the total number of threads.  Two OpenMP
-*   library routines are used to obtain the number of threads and each
-*   thread's number.
-* AUTHOR: Blaise Barney  5/99
-* LAST REVISED: 04/06/05
+* DESCRIÇÃO:
+*   Neste exemplo simples, a thread principal cria uma região paralela.
+*   Todas as threads do time obtêm seu id de thread e o imprimem
+*   A thread principal imprime apenas o número total de threads.
+*   Duas rotinas OpemMP são usadas para obtero número de threads e
+*   cada ID de thread.
+* AUTHOR: Blaise Barney  5/99, modificado por José Anilto em 03/2022
 ******************************************************************************/
 #include <omp.h>
 #include <stdio.h>
@@ -16,23 +13,36 @@
 
 int main (int argc, char *argv[])
 {
-int nthreads, tid;
+int nthreads = 123, tid = 456; // experimente inicializar tid com algum valor
 
-/* Fork a team of threads giving them their own copies of variables */
+/* Cria um conjunto de threads (fork) dando a elas cópias das variáveis. */
 #pragma omp parallel private(nthreads, tid)
   {
 
-  /* Obtain thread number */
+  /* Obtém o número da thread */
   tid = omp_get_thread_num();
   printf("Hello World from thread = %d\n", tid);
 
-  /* Only master thread does this */
+  /* Somente a thread 0 faz isto */
   if (tid == 0)
     {
     nthreads = omp_get_num_threads();
     printf("Number of threads = %d\n", nthreads);
     }
 
-  }  /* All threads join master thread and disband */
+  }
+  /* Todas as threads se juntam aqui (join) */
+  printf("\n Valor de tid: %d\n\n", tid);
+  printf("\n Valor de nthread: %d\n\n", nthreads);
 
 }
+/******************************************************************************
+* OBSERVAÇÃO:
+*   O que acontece se tirar o private() da linha19?
+*   Provavelmente antes da execução do if da linha 27 alguma thread
+*   altera o valor de tid, fazendo com que o resultado final seja inconsistente.
+*
+*   Experimente inicializar os valores de nthreads e tid.
+*
+*   Experimente tirar a cláusula private() e veja o que acontece com tid e nthreads
+******************************************************************************/
